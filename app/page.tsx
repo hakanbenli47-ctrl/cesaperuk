@@ -21,7 +21,7 @@ export default async function Home() {
       <header className="bg-white/95 backdrop-blur-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center gap-4">
           <h1 className="font-black text-xl tracking-tighter text-pink-600 shrink-0">
-            CESA<span className="text-zinc-400 font-light">PERUK</span>
+            NATUREL<span className="text-zinc-400 font-light">PERUK</span>
           </h1>
 
           {/* Orta Kısım: Mobil/Desktop Arama Tetikleyici */}

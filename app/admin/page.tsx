@@ -128,7 +128,7 @@ export default function AdminPage() {
             <h1 className="text-3xl font-black tracking-tighter text-zinc-900 uppercase">
               Admin<span className="text-pink-600">Panel</span>
             </h1>
-            <p className="text-zinc-400 text-xs font-bold tracking-widest mt-1 uppercase">Cesa Peruk Yönetim</p>
+            <p className="text-zinc-400 text-xs font-bold tracking-widest mt-1 uppercase">Naturel Peruk Yönetim</p>
           </div>
 
           {/* ✨ CANLI TAB MENÜ */}
