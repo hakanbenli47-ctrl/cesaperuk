@@ -74,7 +74,7 @@ export default async function Home() {
 
       {/* ⚪️ FOOTER */}
       <footer className="bg-zinc-950 text-zinc-500 py-12 px-4 text-center text-sm">
-        <p>© 2026 Cesa Peruk | En Doğal Çözümler</p>
+        <p>© 2026 Naturel Peruk | En Doğal Çözümler</p>
       </footer>
     </main>
   )
