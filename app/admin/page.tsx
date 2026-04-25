@@ -237,48 +237,70 @@ export default function AdminPage() {
 
         {/* 📋 MEVCUT ÜRÜNLER - LİSTE */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between px-4">
-            <h2 className="text-sm font-black text-zinc-900 uppercase tracking-[0.2em]">Katalog ({urunler.length})</h2>
-            <div className="h-[1px] flex-1 bg-zinc-200 ml-4"></div>
-          </div>
-          
-          <div className="grid gap-3">
-            {urunler.length === 0 ? (
-              <div className="bg-white rounded-3xl p-10 text-center border-2 border-dashed border-zinc-100">
-                <p className="text-zinc-300 font-bold text-sm uppercase tracking-tighter">Henüz ürün bulunmuyor</p>
-              </div>
-            ) : (
-              urunler.map((u) => (
-                <div key={u.id} className="group bg-white p-3 rounded-[1.5rem] border border-zinc-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
-                  <div className="relative w-16 h-16 shrink-0 rounded-2xl overflow-hidden shadow-inner bg-zinc-50">
-                    <img src={u.gorsel} className="w-full h-full object-cover" alt={u.ad} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-  <h4 className="font-black text-zinc-800 truncate text-sm leading-tight uppercase tracking-tight">
-    {u.ad}
-  </h4>
+  <div className="flex items-center justify-between px-4">
+    <h2 className="text-sm font-black text-zinc-900 uppercase tracking-[0.2em]">
+      Katalog ({urunler.length})
+    </h2>
+    <div className="h-[1px] flex-1 bg-zinc-200 ml-4"></div>
+  </div>
 
-  <p className="text-[11px] text-zinc-500 mt-1 line-clamp-2">
-    {u.aciklama || ""}
-  </p>
+  <div className="grid gap-3">
+    {urunler.length === 0 ? (
+      <div className="bg-white rounded-3xl p-10 text-center border-2 border-dashed border-zinc-100">
+        <p className="text-zinc-300 font-bold text-sm uppercase tracking-tighter">
+          Henüz ürün bulunmuyor
+        </p>
+      </div>
+    ) : (
+      urunler.map((u) => (
+        <div
+          key={u.id}
+          className="group bg-white p-3 rounded-[1.5rem] border border-zinc-100 shadow-sm flex gap-4 hover:shadow-md transition-all"
+        >
 
-  <p className="text-blue-600 font-black text-xs mt-0.5">
-    {u.fiyat.toLocaleString('tr-TR')} ₺
-  </p>
-</div>
-                  <button 
-                    onClick={() => urunSil(u.id, u.gorsel)}
-                    className="w-10 h-10 flex items-center justify-center bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all active:scale-90"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
-                </div>
-              ))
-            )}
+          {/* GÖRSEL */}
+          <div className="relative w-16 h-16 shrink-0 rounded-2xl overflow-hidden shadow-inner bg-zinc-50">
+            <img
+              src={u.gorsel}
+              className="w-full h-full object-cover"
+              alt={u.ad}
+            />
           </div>
+
+          {/* İÇERİK (ANA KISIM) */}
+          <div className="flex-1 min-w-0 flex flex-col">
+
+            {/* ÜRÜN ADI */}
+            <h4 className="font-black text-zinc-800 text-sm leading-tight uppercase tracking-tight break-words">
+              {u.ad}
+            </h4>
+
+            {/* AÇIKLAMA */}
+            <p className="text-[11px] text-zinc-500 mt-1 leading-relaxed break-words">
+              {u.aciklama || ""}
+            </p>
+
+            {/* FİYAT (ALTA SABİT) */}
+            <p className="text-blue-600 font-black text-xs mt-auto pt-2">
+              {u.fiyat.toLocaleString("tr-TR")} ₺
+            </p>
+          </div>
+
+          {/* BUTON */}
+          <button
+            onClick={() => urunSil(u.id, u.gorsel)}
+            className="w-10 h-10 flex items-center justify-center bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all active:scale-90 shrink-0 self-start"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+
         </div>
+      ))
+    )}
+  </div>
+</div>
 
       </div>
     </div>

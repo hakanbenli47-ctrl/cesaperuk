@@ -67,39 +67,41 @@ export default function UrunArama({ initialData, kategoriler }: UrunAramaProps) 
       </div>
 
       {/* 🛍️ ÜRÜNLER */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-8">
+     <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-8">
   {filtreliUrunler.length > 0 ? (
     filtreliUrunler.map((urun: any) => {
-      console.log("URUN DATA:", urun)
-
       return (
-        <div key={urun.id} className="bg-white rounded-2xl overflow-hidden border hover:shadow-xl transition">
+        <div
+          key={urun.id}
+          className="bg-white rounded-2xl overflow-hidden border hover:shadow-xl transition flex flex-col"
+        >
 
           {/* GÖRSEL */}
           <div className="aspect-[4/5] overflow-hidden">
-            <img src={urun.gorsel} alt={urun.ad} className="w-full h-full object-cover" />
+            <img
+              src={urun.gorsel}
+              alt={urun.ad}
+              className="w-full h-full object-cover"
+            />
           </div>
 
           {/* İÇERİK */}
-          <div className="p-3 md:p-5">
+          <div className="p-3 md:p-5 flex flex-col">
 
             {/* ÜRÜN ADI */}
-            <h3 className="text-xs md:text-base font-bold text-zinc-900 line-clamp-1">
+            <h3 className="text-xs md:text-base font-bold text-zinc-900 break-words">
               {urun.ad}
             </h3>
 
-            {/* 🔴 DEBUG GÖR (geçici) */}
-           
-
-            {/* ✅ AÇIKLAMA */}
-            <p className="text-[11px] md:text-sm text-zinc-500 line-clamp-2 mt-1 leading-relaxed">
+            {/* ✅ AÇIKLAMA (SERBEST) */}
+            <p className="text-[11px] md:text-sm text-zinc-500 mt-1 leading-relaxed break-words">
               {urun.aciklama || ""}
             </p>
 
             {/* FİYAT + BUTON */}
             <div className="mt-3 flex items-center justify-between">
               <span className="text-sm md:text-lg font-black text-zinc-900">
-                {Number(urun.fiyat).toLocaleString('tr-TR')} ₺
+                {Number(urun.fiyat).toLocaleString("tr-TR")} ₺
               </span>
 
               <a
