@@ -1,11 +1,17 @@
+export const dynamic = "force-dynamic"
+
 import { supabase } from "@/lib/supabase"
 import UrunArama from "@/components/UrunArama"
 
 async function verileriGetir() {
   const [urunlerRes, kategorilerRes] = await Promise.all([
-    supabase.from("urunler").select("*, kategoriler(ad)").order("created_at", { ascending: false }),
+    supabase
+      .from("urunler")
+      .select("*, kategoriler(ad)")
+      .order("created_at", { ascending: false }),
     supabase.from("kategoriler").select("*")
   ])
+
   return { 
     urunler: urunlerRes.data || [], 
     kategoriler: kategorilerRes.data || [] 
@@ -24,17 +30,20 @@ export default async function Home() {
             NATUREL<span className="text-zinc-400 font-light">PERUK</span>
           </h1>
 
-          {/* Orta Kısım: Mobil/Desktop Arama Tetikleyici */}
           <div className="flex-1 max-w-sm hidden sm:block">
             <a href="#modeller" className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-50 border border-zinc-100 text-zinc-400 text-sm">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
               Ürün ara...
             </a>
           </div>
           
           <div className="flex items-center gap-2">
             <a href="#modeller" className="sm:hidden p-2 text-zinc-500">
-               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
             </a>
             <a href="https://wa.me/905422301299" className="text-xs md:text-sm font-bold bg-zinc-900 text-white px-5 py-2.5 rounded-full transition hover:bg-pink-600">
               İletişim
@@ -48,7 +57,9 @@ export default async function Home() {
         <div className="max-w-3xl mx-auto">
           <h2 className="text-4xl md:text-7xl font-black leading-tight tracking-tight text-zinc-900 mb-6">
             Doğal Görünüm <br /> 
-            <span className="bg-gradient-to-r from-pink-500 to-blue-600 bg-clip-text text-transparent italic">Sizin Elinizde</span>
+            <span className="bg-gradient-to-r from-pink-500 to-blue-600 bg-clip-text text-transparent italic">
+              Sizin Elinizde
+            </span>
           </h2>
           <p className="text-zinc-600 text-base md:text-xl mb-10 leading-relaxed">
             Hafif tasarımı ve gerçek saç dokusuyla hayalinizdeki görünüme kavuşun.
@@ -59,16 +70,20 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 🔵 MODELLER & ARAMA ALANI */}
+      {/* 🔵 MODELLER */}
       <section id="modeller" className="max-w-7xl mx-auto px-4 py-20">
         <div className="mb-12">
-           <h3 className="text-2xl md:text-4xl font-black text-zinc-900">Koleksiyonlarımız</h3>
-           <p className="text-zinc-500 mt-2">Aradığınız modeli kategorilerden seçin veya ismini yazın.</p>
+          <h3 className="text-2xl md:text-4xl font-black text-zinc-900">
+            Koleksiyonlarımız
+          </h3>
+          <p className="text-zinc-500 mt-2">
+            Aradığınız modeli kategorilerden seçin veya ismini yazın.
+          </p>
         </div>
         
         <UrunArama 
-          initialData={urunler ?? []} 
-          kategoriler={kategoriler ?? []} 
+          initialData={urunler} 
+          kategoriler={kategoriler} 
         />
       </section>
 
