@@ -254,9 +254,18 @@ export default function AdminPage() {
                     <img src={u.gorsel} className="w-full h-full object-cover" alt={u.ad} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-black text-zinc-800 truncate text-sm leading-tight uppercase tracking-tight">{u.ad}</h4>
-                    <p className="text-blue-600 font-black text-xs mt-0.5">{u.fiyat.toLocaleString('tr-TR')} ₺</p>
-                  </div>
+  <h4 className="font-black text-zinc-800 truncate text-sm leading-tight uppercase tracking-tight">
+    {u.ad}
+  </h4>
+
+  <p className="text-[11px] text-zinc-500 mt-1 line-clamp-2">
+    {u.aciklama || ""}
+  </p>
+
+  <p className="text-blue-600 font-black text-xs mt-0.5">
+    {u.fiyat.toLocaleString('tr-TR')} ₺
+  </p>
+</div>
                   <button 
                     onClick={() => urunSil(u.id, u.gorsel)}
                     className="w-10 h-10 flex items-center justify-center bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all active:scale-90"
