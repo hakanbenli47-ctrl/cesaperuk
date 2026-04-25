@@ -14,6 +14,7 @@ type Urun = {
   fiyat: number
   gorsel: string
   kategori_id: string
+  aciklama?: string
 }
 
 export default function AdminPage() {
@@ -29,6 +30,7 @@ export default function AdminPage() {
   // ÜRÜN STATE
   const [urunAdi, setUrunAdi] = useState("")
   const [fiyat, setFiyat] = useState("")
+  const [aciklama, setAciklama] = useState("")
   const [kategoriId, setKategoriId] = useState("")
   const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
@@ -66,20 +68,34 @@ export default function AdminPage() {
     }
   }
 
-  const gorselYukle = async () => {
-    if (!file) return null
-    const fileName = `${Date.now()}-${file.name}`
-    const { error } = await supabase.storage.from("urun-gorselleri").upload(fileName, file)
-    if (error) {
-      alert("Görsel yükleme hatası: " + error.message)
-      return null
-    }
-    const { data } = supabase.storage.from("urun-gorselleri").getPublicUrl(fileName)
-    return data.publicUrl
+ const gorselYukle = async () => {
+  if (!file) return null
+
+  const temizIsim = file.name
+    .replace(/\s+/g, "-")
+    .replace(/[^\w.-]/g, "")
+
+  const fileName = `${Date.now()}-${temizIsim}`
+
+  const { error } = await supabase
+    .storage
+    .from("urun-gorselleri")
+    .upload(fileName, file)
+
+  if (error) {
+    alert("Görsel yükleme hatası: " + error.message)
+    return null
   }
 
+  const { data } = supabase
+    .storage
+    .from("urun-gorselleri")
+    .getPublicUrl(fileName)
+
+  return data.publicUrl
+}
   const urunEkle = async () => {
-    if (!urunAdi || !fiyat || !kategoriId || !file) return alert("Eksik alan var")
+    if (!urunAdi || !fiyat || !kategoriId || !file || !aciklama) return alert("Eksik alan var")
     setLoading(true)
     const gorselUrl = await gorselYukle()
     if (!gorselUrl) {
@@ -88,7 +104,14 @@ export default function AdminPage() {
     }
     const { data: { user } } = await supabase.auth.getUser()
     const { error } = await supabase.from("urunler").insert([
-      { ad: urunAdi, fiyat: Number(fiyat), gorsel: gorselUrl, kategori_id: kategoriId, user_id: user?.id },
+ { 
+  ad: urunAdi, 
+  fiyat: Number(fiyat), 
+  gorsel: gorselUrl, 
+  kategori_id: kategoriId, 
+  user_id: user?.id,
+  aciklama: aciklama
+},
     ])
     setLoading(false)
     if (error) alert(error.message)
@@ -96,6 +119,7 @@ export default function AdminPage() {
       alert("Ürün başarıyla eklendi")
       setUrunAdi("")
       setFiyat("")
+      setAciklama("")
       setKategoriId("")
       setFile(null)
       verileriGetir()
@@ -171,6 +195,12 @@ export default function AdminPage() {
               <div className="space-y-1">
                  <label className="text-[10px] font-black text-zinc-400 uppercase ml-2 tracking-widest">Ürün Bilgileri</label>
                  <input value={urunAdi} onChange={(e) => setUrunAdi(e.target.value)} placeholder="Model Adı" className="w-full px-5 py-4 bg-zinc-50 border-2 border-zinc-100 rounded-2xl outline-none focus:border-blue-500/50 focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all text-zinc-800 font-bold" />
+             <textarea
+  value={aciklama}
+  onChange={(e) => setAciklama(e.target.value)}
+  placeholder="Ürün açıklaması"
+  className="w-full px-5 py-4 bg-zinc-50 border-2 border-zinc-100 rounded-2xl outline-none focus:border-blue-500/50 focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all text-zinc-800 font-bold resize-none"
+/>
               </div>
               
               <input type="number" value={fiyat} onChange={(e) => setFiyat(e.target.value)} placeholder="Satış Fiyatı (₺)" className="w-full px-5 py-4 bg-zinc-50 border-2 border-zinc-100 rounded-2xl outline-none focus:border-blue-500/50 focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all text-zinc-800 font-bold" />

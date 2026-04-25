@@ -7,7 +7,7 @@ async function verileriGetir() {
   const [urunlerRes, kategorilerRes] = await Promise.all([
     supabase
       .from("urunler")
-      .select("*, kategoriler(ad)")
+      .select("id, ad, fiyat, gorsel, kategori_id, aciklama, kategoriler(ad)")
       .order("created_at", { ascending: false }),
     supabase.from("kategoriler").select("*")
   ])
