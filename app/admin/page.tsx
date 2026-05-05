@@ -13,6 +13,7 @@ type Urun = {
   ad: string
   fiyat: number
   gorsel: string
+  gorseller?: string[]
   kategori_id: string
   aciklama?: string
 }
@@ -32,9 +33,10 @@ export default function AdminPage() {
   const [fiyat, setFiyat] = useState("")
   const [aciklama, setAciklama] = useState("")
   const [kategoriId, setKategoriId] = useState("")
-  const [file, setFile] = useState<File | null>(null)
+  const [files, setFiles] = useState<File[]>([])
   const [loading, setLoading] = useState(false)
   const [urunler, setUrunler] = useState<Urun[]>([])
+  const [gorselIndexleri, setGorselIndexleri] = useState<{ [key: string]: number }>({})
 
   useEffect(() => {
     const check = async () => {
@@ -69,36 +71,43 @@ export default function AdminPage() {
   }
 
  const gorselYukle = async () => {
-  if (!file) return null
+  if (files.length === 0) return null
 
-  const temizIsim = file.name
-    .replace(/\s+/g, "-")
-    .replace(/[^\w.-]/g, "")
+  const yuklenenGorseller: string[] = []
 
-  const fileName = `${Date.now()}-${temizIsim}`
+  for (const file of files) {
+    const temizIsim = file.name
+      .replace(/\s+/g, "-")
+      .replace(/[^\w.-]/g, "")
 
-  const { error } = await supabase
-    .storage
-    .from("urun-gorselleri")
-    .upload(fileName, file)
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}-${temizIsim}`
 
-  if (error) {
-    alert("Görsel yükleme hatası: " + error.message)
-    return null
+    const { error } = await supabase
+      .storage
+      .from("urun-gorselleri")
+      .upload(fileName, file)
+
+    if (error) {
+      alert("Görsel yükleme hatası: " + error.message)
+      return null
+    }
+
+    const { data } = supabase
+      .storage
+      .from("urun-gorselleri")
+      .getPublicUrl(fileName)
+
+    yuklenenGorseller.push(data.publicUrl)
   }
 
-  const { data } = supabase
-    .storage
-    .from("urun-gorselleri")
-    .getPublicUrl(fileName)
-
-  return data.publicUrl
+  return yuklenenGorseller
 }
+
   const urunEkle = async () => {
-    if (!urunAdi || !fiyat || !kategoriId || !file || !aciklama) return alert("Eksik alan var")
+    if (!urunAdi || !fiyat || !kategoriId || files.length === 0 || !aciklama) return alert("Eksik alan var")
     setLoading(true)
-    const gorselUrl = await gorselYukle()
-    if (!gorselUrl) {
+    const gorselUrlListesi = await gorselYukle()
+    if (!gorselUrlListesi) {
       setLoading(false)
       return
     }
@@ -107,7 +116,8 @@ export default function AdminPage() {
  { 
   ad: urunAdi, 
   fiyat: Number(fiyat), 
-  gorsel: gorselUrl, 
+  gorsel: gorselUrlListesi[0],
+  gorseller: gorselUrlListesi,
   kategori_id: kategoriId, 
   user_id: user?.id,
   aciklama: aciklama
@@ -121,23 +131,44 @@ export default function AdminPage() {
       setFiyat("")
       setAciklama("")
       setKategoriId("")
-      setFile(null)
+      setFiles([])
       verileriGetir()
     }
   }
 
-  const urunSil = async (id: string, gorselUrl: string) => {
+  const urunSil = async (id: string, gorselUrl: string, gorseller?: string[]) => {
     const onay = confirm("Bu ürünü silmek istediğinize emin misiniz?")
     if (!onay) return
-    const fileName = gorselUrl.split("/").pop()
-    if (fileName) {
-      await supabase.storage.from("urun-gorselleri").remove([fileName])
+
+    const silinecekGorseller = gorseller && gorseller.length > 0 ? gorseller : [gorselUrl]
+
+    const fileNames = silinecekGorseller
+      .map((url) => url.split("/").pop())
+      .filter(Boolean) as string[]
+
+    if (fileNames.length > 0) {
+      await supabase.storage.from("urun-gorselleri").remove(fileNames)
     }
+
     const { error } = await supabase.from("urunler").delete().eq("id", id)
     if (error) alert(error.message)
     else {
       setUrunler(urunler.filter(u => u.id !== id))
     }
+  }
+
+  const oncekiGorsel = (urunId: string, toplam: number) => {
+    setGorselIndexleri((prev) => ({
+      ...prev,
+      [urunId]: ((prev[urunId] || 0) - 1 + toplam) % toplam,
+    }))
+  }
+
+  const sonrakiGorsel = (urunId: string, toplam: number) => {
+    setGorselIndexleri((prev) => ({
+      ...prev,
+      [urunId]: ((prev[urunId] || 0) + 1) % toplam,
+    }))
   }
 
   if (!kontrol) return null
@@ -210,18 +241,33 @@ export default function AdminPage() {
                 {kategoriler.map((k) => <option key={k.id} value={k.id}>{k.ad}</option>)}
               </select>
 
-              <label className="group relative flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-zinc-200 rounded-3xl cursor-pointer hover:border-blue-500/50 hover:bg-blue-50/30 transition-all overflow-hidden">
-                {file ? (
-                   <img src={URL.createObjectURL(file)} className="absolute inset-0 w-full h-full object-cover" />
+              <label className="group relative flex flex-col items-center justify-center w-full min-h-40 border-2 border-dashed border-zinc-200 rounded-3xl cursor-pointer hover:border-blue-500/50 hover:bg-blue-50/30 transition-all overflow-hidden p-4">
+                {files.length > 0 ? (
+                  <div className="grid grid-cols-5 gap-2 w-full">
+                    {files.map((f, index) => (
+                      <div key={index} className="relative h-20 rounded-2xl overflow-hidden bg-zinc-100">
+                        <img src={URL.createObjectURL(f)} className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                  </div>
                 ) : (
                   <div className="text-center">
                     <div className="bg-blue-100 text-blue-600 p-3 rounded-full mb-2 mx-auto w-fit group-hover:scale-110 transition-transform">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/></svg>
                     </div>
-                    <span className="text-[10px] font-black text-zinc-400 uppercase tracking-tighter">Fotoğraf Yükle</span>
+                    <span className="text-[10px] font-black text-zinc-400 uppercase tracking-tighter">En fazla 5 fotoğraf yükle</span>
                   </div>
                 )}
-                <input type="file" className="hidden" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const secilenDosyalar = Array.from(e.target.files || []).slice(0, 5)
+                    setFiles(secilenDosyalar)
+                  }}
+                />
               </label>
 
               <button 
@@ -252,7 +298,12 @@ export default function AdminPage() {
         </p>
       </div>
     ) : (
-      urunler.map((u) => (
+      urunler.map((u) => {
+        const gorselListesi = u.gorseller && u.gorseller.length > 0 ? u.gorseller : [u.gorsel]
+        const aktifIndex = gorselIndexleri[u.id] || 0
+        const aktifGorsel = gorselListesi[aktifIndex] || u.gorsel
+
+        return (
         <div
           key={u.id}
           className="group bg-white p-3 rounded-[1.5rem] border border-zinc-100 shadow-sm flex gap-4 hover:shadow-md transition-all"
@@ -261,10 +312,34 @@ export default function AdminPage() {
           {/* GÖRSEL */}
           <div className="relative w-16 h-16 shrink-0 rounded-2xl overflow-hidden shadow-inner bg-zinc-50">
             <img
-              src={u.gorsel}
+              src={aktifGorsel}
               className="w-full h-full object-cover"
               alt={u.ad}
             />
+
+            {gorselListesi.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => oncekiGorsel(u.id, gorselListesi.length)}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-5 h-8 bg-black/45 text-white text-lg leading-none flex items-center justify-center"
+                >
+                  ‹
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => sonrakiGorsel(u.id, gorselListesi.length)}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 w-5 h-8 bg-black/45 text-white text-lg leading-none flex items-center justify-center"
+                >
+                  ›
+                </button>
+
+                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 bg-black/50 text-white text-[8px] px-1.5 py-0.5 rounded-full">
+                  {aktifIndex + 1}/{gorselListesi.length}
+                </div>
+              </>
+            )}
           </div>
 
           {/* İÇERİK (ANA KISIM) */}
@@ -288,7 +363,7 @@ export default function AdminPage() {
 
           {/* BUTON */}
           <button
-            onClick={() => urunSil(u.id, u.gorsel)}
+            onClick={() => urunSil(u.id, u.gorsel, u.gorseller)}
             className="w-10 h-10 flex items-center justify-center bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all active:scale-90 shrink-0 self-start"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -297,7 +372,8 @@ export default function AdminPage() {
           </button>
 
         </div>
-      ))
+        )
+      })
     )}
   </div>
 </div>

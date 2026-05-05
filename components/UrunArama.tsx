@@ -10,6 +10,21 @@ interface UrunAramaProps {
 export default function UrunArama({ initialData, kategoriler }: UrunAramaProps) {
   const [seciliKategori, setSeciliKategori] = useState("all")
   const [aramaMetni, setAramaMetni] = useState("")
+  const [gorselIndexleri, setGorselIndexleri] = useState<{ [key: string]: number }>({})
+
+  const oncekiGorsel = (urunId: string, toplam: number) => {
+    setGorselIndexleri((prev) => ({
+      ...prev,
+      [urunId]: ((prev[urunId] || 0) - 1 + toplam) % toplam,
+    }))
+  }
+
+  const sonrakiGorsel = (urunId: string, toplam: number) => {
+    setGorselIndexleri((prev) => ({
+      ...prev,
+      [urunId]: ((prev[urunId] || 0) + 1) % toplam,
+    }))
+  }
 
   const filtreliUrunler = initialData?.filter((urun: any) => {
     const kategoriMatch = seciliKategori === "all" || urun.kategori_id === seciliKategori
@@ -67,62 +82,94 @@ export default function UrunArama({ initialData, kategoriler }: UrunAramaProps) 
       </div>
 
       {/* 🛍️ ÜRÜNLER */}
-     <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-8">
-  {filtreliUrunler.length > 0 ? (
-    filtreliUrunler.map((urun: any) => {
-      return (
-        <div
-          key={urun.id}
-          className="bg-white rounded-2xl overflow-hidden border hover:shadow-xl transition flex flex-col"
-        >
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-8">
+        {filtreliUrunler.length > 0 ? (
+          filtreliUrunler.map((urun: any) => {
+            const gorselListesi =
+              urun.gorseller && urun.gorseller.length > 0
+                ? urun.gorseller
+                : [urun.gorsel]
 
-          {/* GÖRSEL */}
-          <div className="aspect-[4/5] overflow-hidden">
-            <img
-              src={urun.gorsel}
-              alt={urun.ad}
-              className="w-full h-full object-cover"
-            />
-          </div>
+            const aktifIndex = gorselIndexleri[urun.id] || 0
+            const aktifGorsel = gorselListesi[aktifIndex] || urun.gorsel
 
-          {/* İÇERİK */}
-          <div className="p-3 md:p-5 flex flex-col">
-
-            {/* ÜRÜN ADI */}
-            <h3 className="text-xs md:text-base font-bold text-zinc-900 break-words">
-              {urun.ad}
-            </h3>
-
-            {/* ✅ AÇIKLAMA (SERBEST) */}
-            <p className="text-[11px] md:text-sm text-zinc-500 mt-1 leading-relaxed break-words">
-              {urun.aciklama || ""}
-            </p>
-
-            {/* FİYAT + BUTON */}
-            <div className="mt-3 flex items-center justify-between">
-              <span className="text-sm md:text-lg font-black text-zinc-900">
-                {Number(urun.fiyat).toLocaleString("tr-TR")} ₺
-              </span>
-
-              <a
-                href={`https://wa.me/905422301299?text=Merhaba, "${urun.ad}" ürününüz hakkında bilgi alabilir miyim?`}
-                target="_blank"
-                className="bg-green-500 text-white p-2 rounded-lg"
+            return (
+              <div
+                key={urun.id}
+                className="bg-white rounded-2xl overflow-hidden border hover:shadow-xl transition flex flex-col"
               >
-                WhatsApp
-              </a>
-            </div>
 
+                {/* GÖRSEL */}
+                <div className="aspect-[4/5] overflow-hidden relative">
+                  <img
+                    src={aktifGorsel}
+                    alt={urun.ad}
+                    className="w-full h-full object-cover"
+                  />
+
+                  {gorselListesi.length > 1 && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => oncekiGorsel(urun.id, gorselListesi.length)}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/45 text-white text-xl flex items-center justify-center"
+                      >
+                        ‹
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => sonrakiGorsel(urun.id, gorselListesi.length)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/45 text-white text-xl flex items-center justify-center"
+                      >
+                        ›
+                      </button>
+
+                      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/50 text-white text-[10px] px-2 py-1 rounded-full">
+                        {aktifIndex + 1}/{gorselListesi.length}
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* İÇERİK */}
+                <div className="p-3 md:p-5 flex flex-col">
+
+                  {/* ÜRÜN ADI */}
+                  <h3 className="text-xs md:text-base font-bold text-zinc-900 break-words">
+                    {urun.ad}
+                  </h3>
+
+                  {/* ✅ AÇIKLAMA (SERBEST) */}
+                  <p className="text-[11px] md:text-sm text-zinc-500 mt-1 leading-relaxed break-words">
+                    {urun.aciklama || ""}
+                  </p>
+
+                  {/* FİYAT + BUTON */}
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className="text-sm md:text-lg font-black text-zinc-900">
+                      {Number(urun.fiyat).toLocaleString("tr-TR")} ₺
+                    </span>
+
+                    <a
+                      href={`https://wa.me/905422301299?text=Merhaba, "${urun.ad}" ürününüz hakkında bilgi alabilir miyim?`}
+                      target="_blank"
+                      className="bg-green-500 text-white p-2 rounded-lg"
+                    >
+                      WhatsApp
+                    </a>
+                  </div>
+
+                </div>
+              </div>
+            )
+          })
+        ) : (
+          <div className="col-span-full text-center py-20 text-zinc-400">
+            Ürün bulunamadı
           </div>
-        </div>
-      )
-    })
-  ) : (
-    <div className="col-span-full text-center py-20 text-zinc-400">
-      Ürün bulunamadı
-    </div>
-  )}
-</div>
+        )}
+      </div>
 
     </div>
   )
