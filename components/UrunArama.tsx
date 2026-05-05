@@ -36,20 +36,20 @@ export default function UrunArama({ initialData, kategoriler }: UrunAramaProps) 
     <div className="space-y-6">
 
       {/* 🔍 ARAMA */}
-      <div className="relative max-w-2xl mx-auto mb-10 group">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <svg className="h-5 w-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
-        <input
-          type="text"
-          placeholder="Model, renk veya stil ara..."
-          value={aramaMetni}
-          onChange={(e) => setAramaMetni(e.target.value)}
-          className="block w-full pl-11 pr-4 py-4 bg-white border border-pink-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm md:text-base"
-        />
-      </div>
+     <div className="relative max-w-2xl mx-auto mb-10 group">
+  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+    <svg className="h-5 w-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+  </div>
+  <input
+    type="text"
+    placeholder="Model, renk veya stil ara..."
+    value={aramaMetni}
+    onChange={(e) => setAramaMetni(e.target.value)}
+    className="block w-full pl-11 pr-4 py-4 bg-white border border-pink-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm md:text-base placeholder:text-gray-500"
+  />
+</div>
 
       {/* 📱 KATEGORİ */}
       <div className="sticky top-[64px] z-40 bg-white/80 backdrop-blur-md py-4 -mx-4 px-4 border-b border-pink-50">
