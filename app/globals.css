@@ -12,15 +12,139 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* KAMPANYA KAYAN YAZI */
+@keyframes kampanyaKaydir {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.kampanya-serit {
+  width: 100%;
+  overflow: hidden;
+  background: #09090b;
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.kampanya-ic {
+  display: flex;
+  width: max-content;
+  animation: kampanyaKaydir 28s linear infinite;
+  will-change: transform;
+}
+
+.kampanya-grup {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.kampanya-yazi {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 24px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.kampanya-nokta {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #ec4899;
+  box-shadow: 0 0 14px rgba(236, 72, 153, 0.9);
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .kampanya-ic {
+    animation-duration: 22s;
+  }
+
+  .kampanya-yazi {
+    padding: 8px 18px;
+    font-size: 12px;
+  }
+}
+
+/* HERO ÜRÜN SLIDER */
+@keyframes heroSlide {
+  0% {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+
+  4% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  20% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  24% {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+}
+
+.hero-slide {
+  opacity: 0;
+  animation-name: heroSlide;
+  animation-duration: calc(var(--slide-count) * 5s);
+  animation-delay: calc(var(--slide-index) * 5s);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+  will-change: opacity, transform;
+}
+
+.hero-slide:first-child {
+  opacity: 1;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f4f4f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ec4899;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #db2777;
 }
