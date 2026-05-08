@@ -132,22 +132,47 @@ export default async function Home() {
               Gerçek saç dokusuna yakın görünüm, hafif kullanım ve yüzünüze uygun model seçenekleriyle kendinizi daha rahat hissedin.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <a
-                href="#modeller"
-                className="bg-zinc-950 text-white px-8 py-4 rounded-2xl font-bold text-center shadow-xl hover:bg-pink-600 transition"
-              >
-                Modelleri İncele
-              </a>
+         <div className="flex flex-col gap-4">
+  
+  <div className="flex flex-col sm:flex-row gap-4">
+    <a
+      href="#modeller"
+      className="flex-1 bg-zinc-950 text-white px-8 py-4 rounded-2xl font-bold text-center shadow-xl hover:bg-pink-600 transition"
+    >
+      Modelleri İncele
+    </a>
 
-              <a
-                href="https://wa.me/905422301299"
-                className="bg-white text-zinc-900 border border-zinc-200 px-8 py-4 rounded-2xl font-bold text-center shadow-sm hover:border-pink-300 transition"
-              >
-                WhatsApp’tan Sor
-              </a>
-            </div>
+    <a
+      href="https://wa.me/905422301299"
+      className="flex-1 bg-white text-zinc-900 border border-zinc-200 px-8 py-4 rounded-2xl font-bold text-center shadow-sm hover:border-pink-300 transition"
+    >
+      WhatsApp’tan Sor
+    </a>
+  </div>
 
+  <a
+    href="https://www.trendyol.com/magaza/naturel-peruk-m-1141498?channelId=1&sst=0"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="w-full flex items-center justify-center sm:justify-start gap-4 bg-gradient-to-r from-orange-500 to-orange-600 border border-orange-400 rounded-2xl px-5 py-4 shadow-xl hover:scale-[1.01] hover:shadow-2xl transition"
+  >
+    <img
+      src="https://cdn.dsmcdn.com/web/logo/ty-web.svg"
+      alt="Trendyol"
+      className="h-8 w-auto bg-white rounded-lg px-2 py-1"
+    />
+
+    <div className="text-center sm:text-left">
+      <p className="font-black text-white text-sm md:text-base">
+        Trendyol Mağazamızı Ziyaret Edin
+      </p>
+      <p className="text-orange-100 text-xs md:text-sm">
+        Güvenli alışveriş için resmi mağazamız
+      </p>
+    </div>
+  </a>
+
+</div>
             <div className="grid grid-cols-3 gap-3 mt-10 max-w-lg">
               <div className="bg-white border border-zinc-100 rounded-2xl p-4 shadow-sm">
                 <p className="text-xl font-black text-zinc-950">100%</p>
